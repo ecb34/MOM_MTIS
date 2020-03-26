@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/go-stomp/stomp"
 	"strconv"
 )
@@ -46,13 +47,13 @@ func recibirMensajesIluminacion(subscribed chan bool) {
 	conn, err := stomp.Dial("tcp", *serverAddr, options...)
 
 	if err != nil{
-		println("cannot connect to server", err.Error())
+		println("No se puede conectar al servidor ", err.Error())
 		return
 	}
 
 	sub, err := conn.Subscribe(*topicLecturaIlum1, stomp.AckAuto)
 	if err != nil {
-		println("cannot subscribe to", *topicLecturaIlum1, err.Error())
+		println("No se ha podido suscribir al topic", *topicLecturaIlum1, err.Error())
 		return
 	}
 	close(subscribed)
@@ -60,7 +61,7 @@ func recibirMensajesIluminacion(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Iluminación: ", actualText)
+		println("Iluminación Recibida de la Oficina 1 ", actualText)
 		var iluminacion,err =  strconv.Atoi(actualText)
 
 		if err != nil {
@@ -77,12 +78,12 @@ func recibirMensajesIluminacion(subscribed chan bool) {
 func enviarMensajeActuadorIluminacion() {
 	conn, err := stomp.Dial("tcp", *serverAddr, options...)
 	if err != nil{
-		println("Cannot connect to server", err.Error())
+		println("No se puede conectar al servidor", err.Error())
 	}
-	text := "Valor muy bajo de iluminacion"
+	text := fmt.Sprintf("%d", minLuminosidad)
 	err = conn.Send(*topicActuadorIlum1, "text/plain", []byte(text), nil)
 	if err != nil {
-		println("fallo al enviar al servidor", err)
+		println("Fallo al enviar al servidor", err)
 		return
 	}
 }
@@ -95,13 +96,13 @@ func recibirMensajesTemperatura(subscribed chan bool) {
 	conn, err := stomp.Dial("tcp", *serverAddr, options...)
 
 	if err != nil {
-		println("cannot connect to server", err.Error())
+		println("Fallo al conectarse con el servidor", err.Error())
 		return
 	}
 
 	sub, err := conn.Subscribe(*topicLecturaTemp1, stomp.AckAuto)
 	if err != nil {
-		println("cannot subscribe to", *topicLecturaTemp1, err.Error())
+		println("No se ha podido suscribir al topico", *topicLecturaTemp1, err.Error())
 		return
 	}
 	close(subscribed)
@@ -109,7 +110,7 @@ func recibirMensajesTemperatura(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Temperatura:", actualText)
+		println("Temperatura Recibida de la Oficina 1::", actualText)
 		var temperatura,err =  strconv.Atoi(actualText)
 
 		if err != nil {
@@ -125,12 +126,12 @@ func recibirMensajesTemperatura(subscribed chan bool) {
 func enviarMensajeActuadorTemperatura() {
 	conn, err := stomp.Dial("tcp", *serverAddr, options...)
 	if err != nil{
-		println("Cannot connect to server", err.Error())
+		println("No se puede conectar al servidor", err.Error())
 	}
-	text := "Valor muy bajo de iluminacion"
+	text := fmt.Sprintf("%d", minTemperatura)
 	err = conn.Send(*topicActuadorTemp1, "text/plain", []byte(text), nil)
 	if err != nil {
-		println("fallo al enviar al servidor", err)
+		println("Fallo al enviar al servidor", err)
 		return
 	}
 }
