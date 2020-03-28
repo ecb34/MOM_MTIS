@@ -11,10 +11,15 @@ const minTemperatura = 20
 const minLuminosidad = 400
 
 var serverAddr = flag.String("server", "localhost:61613", "STOMP server endpoint")
-var topicLecturaTemp1 = flag.String("topicTemp", "/topic/LecturasTemperaturas1", "Topic Lectura temperatura Oficina 1")
-var topicLecturaIlum1 = flag.String("topicIlum", "/topic/LecturasIluminacion1", "Topic Lectura Iluminacion Oficina 1")
+var topicLecturaTemp1 = flag.String("topicTemp1", "/topic/LecturasTemperaturas1", "Topic Lectura Temperatura Oficina 1")
+var topicLecturaIlum1 = flag.String("topicIlum1", "/topic/LecturasIluminacion1", "Topic Lectura Iluminacion Oficina 1")
+var topicLecturaTemp2 = flag.String("topicTemp2", "/topic/LecturasTemperaturas2", "Topic Lectura Temperatura Oficina 2")
+var topicLecturaIlum2 = flag.String("topicIlum2", "/topic/LecturasIluminacion2", "Topic Lectura Iluminacion Oficina 2")
 var topicActuadorTemp1 = flag.String("topicActuadorTemp1", "/topic/ActuadorTemperatura1", "Topic Actuador Temperatura Oficina 1")
 var topicActuadorIlum1 = flag.String("topicActuadorIlum1", "/topic/ActuadorIluminacion1", "Topic Actuador Iluminacion Oficina 1")
+var topicActuadorTemp2 = flag.String("topicActuadorTemp2", "/topic/ActuadorTemperatura2", "Topic Actuador Temperatura Oficina 2")
+var topicActuadorIlum2 = flag.String("topicActuadorIlum2", "/topic/ActuadorIluminacion2", "Topic Actuador Iluminacion Oficina 2")
+
 var stop = make(chan bool)
 
 // these are the default options that work with RabbitMQ
@@ -110,7 +115,7 @@ func recibirMensajesTemperatura(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Temperatura Recibida de la Oficina 1::", actualText)
+		println("Temperatura Recibida de la Oficina 1", actualText)
 		var temperatura,err =  strconv.Atoi(actualText)
 
 		if err != nil {

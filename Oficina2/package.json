@@ -1,0 +1,14 @@
+{
+  "name": "oficina2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "oficina2.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ecb34",
+  "license": "ISC",
+  "dependencies": {
+    "stompit": "^1.0.0"
+  }
+}
