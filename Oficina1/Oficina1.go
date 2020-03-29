@@ -116,7 +116,7 @@ func recibirMensajeActuadorIluminacion(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Subiendo Iluminación a: ", actualText)
+		println("Subiendo Iluminación a", actualText)
 		iluminacion, err  = strconv.Atoi(actualText)
 
 		if err != nil{
@@ -147,7 +147,7 @@ func recibirMensajeActuadorTemperatura(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Subiendo Temperatura a:", actualText)
+		println("Subiendo Temperatura a", actualText)
 		temperatura, err  = strconv.Atoi(actualText)
 
 		if err != nil{

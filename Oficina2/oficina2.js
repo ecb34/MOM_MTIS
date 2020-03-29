@@ -19,7 +19,7 @@ let iluminacion = Math.floor(Math.random() * (1000 - 200)) + 200;
 
 channel.subscribe({ destination: '/topic/ActuadorTemperatura2' }, (err, msg) => {
     msg.readString('UTF-8', (err, body) => {
-        console.log("Subiendo la iluminación a " +body);
+        console.log("Subiendo la temperatura a " +body);
         temperatura = parseInt(body);
     });
 });
@@ -44,7 +44,7 @@ setInterval(() =>{
 
 setInterval(() => {
     const sendHeaders = {
-        'destination': '/topic/LecturasIluminacion1',
+        'destination': '/topic/LecturasIluminacion2',
         'content-type': 'text/plain'
     };
 
