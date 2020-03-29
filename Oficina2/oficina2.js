@@ -6,7 +6,7 @@ connectionManager.addServer({
     'port': 61613,
     'connectHeaders':{
         'host': '/',
-        'login': 'username',
+        'login': 'user',
         'passcode': 'password',
         'heart-beat': '5000,5000'
     }
@@ -32,7 +32,7 @@ channel.subscribe({destination: '/topic/ActuadorIluminacion2'}, (err,msg) => {
 });
 
 
-setInterval(() =>{
+function enviarMensajeLecturaTemperatura() {
     const sendHeaders = {
         'destination': '/topic/LecturasTemperaturas2',
         'content-type': 'text/plain'
@@ -40,9 +40,9 @@ setInterval(() =>{
 
     channel.send(sendHeaders, '' + temperatura);
     temperatura = Math.floor(Math.random() * 50);
-},5000);
+}
 
-setInterval(() => {
+function enviarMensajeLecturaLuminosidad() {
     const sendHeaders = {
         'destination': '/topic/LecturasIluminacion2',
         'content-type': 'text/plain'
@@ -50,4 +50,9 @@ setInterval(() => {
 
     channel.send(sendHeaders, '' + iluminacion);
     iluminacion = Math.floor(Math.random() * 50);
-}, 5000);
+}
+
+setInterval(() =>{
+    enviarMensajeLecturaTemperatura();
+    enviarMensajeLecturaLuminosidad();
+},5000);

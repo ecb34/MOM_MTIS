@@ -22,7 +22,7 @@ var stop = make(chan bool)
 
 // these are the default options that work with RabbitMQ
 var options = []func(*stomp.Conn) error{
-	stomp.ConnOpt.Login("guest", "guest"),
+	stomp.ConnOpt.Login("user", "password"),
 	stomp.ConnOpt.Host("/"),
 }
 
