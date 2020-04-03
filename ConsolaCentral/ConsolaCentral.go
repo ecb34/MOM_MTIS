@@ -7,10 +7,15 @@ import (
 	"strconv"
 )
 
-const minTemperaturaOficina1 = 20
-const minLuminosidadOficina1 = 400
-const minTemperaturaOficina2 = 30
-const minLuminosidadOficina2 = 300
+type Oficina struct {
+	minTemperatura int
+	maxTemperatura int
+	minLuminosidad int
+	maxLuminosidad int
+}
+
+var oficina1 = Oficina{25,35,350,500}
+var oficina2 = Oficina{30,40,400,600}
 
 var serverAddr = flag.String("server", "localhost:61613", "STOMP server endpoint")
 var topicLecturaTemp1 = flag.String("topicTemp1", "/topic/LecturasTemperaturas1", "Topic Lectura Temperatura Oficina 1")
@@ -52,10 +57,6 @@ func main(){
 	<-stop
 }
 
-
-
-
-
 func recibirMensajesIluminacion2(subscribed chan bool) {
 	defer func(){
 		stop <-true
@@ -86,8 +87,10 @@ func recibirMensajesIluminacion2(subscribed chan bool) {
 			return
 		}
 
-		if iluminacion < minLuminosidadOficina2 {
-			go enviarMensajeActuadorIluminacion(topicActuadorIlum2, minLuminosidadOficina2)
+		if oficina2.minLuminosidad > iluminacion {
+			go enviarMensajeActuador(topicActuadorIlum2, oficina2.minLuminosidad)
+		}else if iluminacion > oficina2.maxLuminosidad {
+			go enviarMensajeActuador(topicActuadorIlum2, oficina2.maxLuminosidad)
 		}
 	}
 }
@@ -114,7 +117,7 @@ func recibirMensajesIluminacion1(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Iluminación Recibida de la Oficina 1 ", actualText)
+		println("Iluminación Recibida de la Oficina 1", actualText)
 		var iluminacion,err =  strconv.Atoi(actualText)
 
 		if err != nil {
@@ -122,22 +125,11 @@ func recibirMensajesIluminacion1(subscribed chan bool) {
 			return
 		}
 
-		if iluminacion < minLuminosidadOficina1 {
-			go enviarMensajeActuadorIluminacion(topicActuadorIlum1, minLuminosidadOficina1)
+		if oficina1.minLuminosidad > iluminacion {
+			go enviarMensajeActuador(topicActuadorIlum1, oficina1.minLuminosidad)
+		}else if iluminacion > oficina1.maxLuminosidad {
+			go enviarMensajeActuador(topicActuadorIlum1, oficina1.maxLuminosidad)
 		}
-	}
-}
-
-func enviarMensajeActuadorIluminacion(topicActuador *string, minLuminosidad int) {
-	conn, err := stomp.Dial("tcp", *serverAddr, options...)
-	if err != nil{
-		println("No se puede conectar al servidor", err.Error())
-	}
-	text := fmt.Sprintf("%d", minLuminosidad)
-	err = conn.Send(*topicActuador, "text/plain", []byte(text), nil)
-	if err != nil {
-		println("Fallo al enviar al servidor", err)
-		return
 	}
 }
 
@@ -170,8 +162,10 @@ func recibirMensajesTemperatura2(subscribed chan bool) {
 			println("Error al convertir el mensaje a entero")
 			return
 		}
-		if minTemperaturaOficina2 > temperatura {
-			go enviarMensajeActuadorTemperatura(topicActuadorTemp2, minTemperaturaOficina2)
+		if oficina2.minTemperatura > temperatura {
+			go enviarMensajeActuador(topicActuadorTemp2, oficina2.minTemperatura)
+		}else if temperatura > oficina2.maxTemperatura {
+			go enviarMensajeActuador(topicActuadorTemp2, oficina2.maxTemperatura)
 		}
 	}
 }
@@ -189,7 +183,7 @@ func recibirMensajesTemperatura1(subscribed chan bool) {
 
 	sub, err := conn.Subscribe(*topicLecturaTemp1, stomp.AckAuto)
 	if err != nil {
-		println("No se ha podido suscribir al topico", *topicLecturaTemp1, err.Error())
+		println("No se ha podido suscribir al topic", *topicLecturaTemp1, err.Error())
 		return
 	}
 	close(subscribed)
@@ -204,18 +198,20 @@ func recibirMensajesTemperatura1(subscribed chan bool) {
 			println("Error al convertir el mensaje a entero")
 			return
 		}
-		if minTemperaturaOficina1 > temperatura {
-			go enviarMensajeActuadorTemperatura(topicActuadorTemp1, minTemperaturaOficina1)
+		if oficina1.minTemperatura > temperatura {
+			go enviarMensajeActuador(topicActuadorTemp1, oficina1.minTemperatura)
+		}else if temperatura > oficina1.maxTemperatura {
+			go enviarMensajeActuador(topicActuadorTemp1, oficina1.maxTemperatura)
 		}
 	}
 }
 
-func enviarMensajeActuadorTemperatura(topicActuador *string,minTemperatura int) {
+func enviarMensajeActuador(topicActuador *string,valor int) {
 	conn, err := stomp.Dial("tcp", *serverAddr, options...)
 	if err != nil{
 		println("No se puede conectar al servidor", err.Error())
 	}
-	text := fmt.Sprintf("%d", minTemperatura)
+	text := fmt.Sprintf("%d", valor)
 	err = conn.Send(*topicActuador, "text/plain", []byte(text), nil)
 	if err != nil {
 		println("Fallo al enviar al servidor", err)

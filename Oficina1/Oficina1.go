@@ -35,7 +35,7 @@ func main() {
 	go recibirMensajeActuadorTemperatura(subscribedActuadorTemp)
 	go recibirMensajeActuadorIluminacion(subscribedActuadorIlum)
 
-	// wait until we know the receiver has subscribed
+	// esperamos hasta que sepamos que nos hemos suscrito a los actuadores
 	<-subscribedActuadorTemp
 	<-subscribedActuadorIlum
 
@@ -116,7 +116,7 @@ func recibirMensajeActuadorIluminacion(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Subiendo Iluminación a", actualText)
+		println("Cambiando Iluminación a", actualText)
 		iluminacion, err  = strconv.Atoi(actualText)
 
 		if err != nil{
@@ -147,7 +147,7 @@ func recibirMensajeActuadorTemperatura(subscribed chan bool) {
 	for {
 		msg := <-sub.C
 		actualText := string(msg.Body)
-		println("Subiendo Temperatura a", actualText)
+		println("Cambiando Temperatura a", actualText)
 		temperatura, err  = strconv.Atoi(actualText)
 
 		if err != nil{

@@ -19,14 +19,14 @@ let iluminacion = Math.floor(Math.random() * (1000 - 200)) + 200;
 
 channel.subscribe({ destination: '/topic/ActuadorTemperatura2' }, (err, msg) => {
     msg.readString('UTF-8', (err, body) => {
-        console.log("Subiendo la temperatura a " +body);
+        console.log("Cambiando la temperatura a " +body);
         temperatura = parseInt(body);
     });
 });
 
 channel.subscribe({destination: '/topic/ActuadorIluminacion2'}, (err,msg) => {
     msg.readString('UTF-8', (err, body) => {
-        console.log("Subiendo la iluminación a " + body);
+        console.log("Cambiando la iluminación a " + body);
         iluminacion = parseInt(body);
     });
 });
@@ -49,7 +49,7 @@ function enviarMensajeLecturaLuminosidad() {
     };
 
     channel.send(sendHeaders, '' + iluminacion);
-    iluminacion = Math.floor(Math.random() * 50);
+    iluminacion = Math.floor(Math.random() * (1000 - 200)) + 200;
 }
 
 setInterval(() =>{
